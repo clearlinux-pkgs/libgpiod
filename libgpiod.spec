@@ -4,12 +4,13 @@
 #
 Name     : libgpiod
 Version  : 0.3
-Release  : 1
+Release  : 2
 URL      : https://github.com/brgl/libgpiod/archive/v0.3.tar.gz
 Source0  : https://github.com/brgl/libgpiod/archive/v0.3.tar.gz
 Summary  : C library and tools for interacting with the linux GPIO character device
 Group    : Development/Tools
 License  : LGPL-2.1
+Requires: libgpiod-bin = %{version}-%{release}
 Requires: libgpiod-lib = %{version}-%{release}
 Requires: libgpiod-license = %{version}-%{release}
 BuildRequires : pkgconfig(libkmod)
@@ -21,12 +22,21 @@ libgpiod
 libgpiod - C library and tools for interacting with the linux GPIO
 character device (gpiod stands for GPIO device)
 
+%package bin
+Summary: bin components for the libgpiod package.
+Group: Binaries
+Requires: libgpiod-license = %{version}-%{release}
+
+%description bin
+bin components for the libgpiod package.
+
+
 %package dev
 Summary: dev components for the libgpiod package.
 Group: Development
 Requires: libgpiod-lib = %{version}-%{release}
+Requires: libgpiod-bin = %{version}-%{release}
 Provides: libgpiod-devel = %{version}-%{release}
-Requires: libgpiod = %{version}-%{release}
 Requires: libgpiod = %{version}-%{release}
 
 %description dev
@@ -58,7 +68,7 @@ export http_proxy=http://127.0.0.1:9/
 export https_proxy=http://127.0.0.1:9/
 export no_proxy=localhost,127.0.0.1,0.0.0.0
 export LANG=C.UTF-8
-export SOURCE_DATE_EPOCH=1564258597
+export SOURCE_DATE_EPOCH=1571073548
 export GCC_IGNORE_WERROR=1
 export AR=gcc-ar
 export RANLIB=gcc-ranlib
@@ -78,18 +88,31 @@ export no_proxy=localhost,127.0.0.1,0.0.0.0
 make VERBOSE=1 V=1 %{?_smp_mflags} check
 
 %install
-export SOURCE_DATE_EPOCH=1564258597
+export SOURCE_DATE_EPOCH=1571073548
 rm -rf %{buildroot}
 mkdir -p %{buildroot}/usr/share/package-licenses/libgpiod
-cp COPYING %{buildroot}/usr/share/package-licenses/libgpiod/COPYING
+cp %{_builddir}/libgpiod-0.3/COPYING %{buildroot}/usr/share/package-licenses/libgpiod/2c378b484c6da96db8f05f9bd795fcf5ddad0205
 %make_install
+## install_append content
+make -C src/tools
+make -C src/tools install DESTDIR=%{buildroot}
+## install_append end
 
 %files
 %defattr(-,root,root,-)
 
+%files bin
+%defattr(-,root,root,-)
+/usr/bin/gpiodetect
+/usr/bin/gpiofind
+/usr/bin/gpioget
+/usr/bin/gpioinfo
+/usr/bin/gpiomon
+/usr/bin/gpioset
+
 %files dev
 %defattr(-,root,root,-)
-/usr/include/*.h
+/usr/include/gpiod.h
 /usr/lib64/libgpiod.so
 
 %files lib
@@ -99,4 +122,4 @@ cp COPYING %{buildroot}/usr/share/package-licenses/libgpiod/COPYING
 
 %files license
 %defattr(0644,root,root,0755)
-/usr/share/package-licenses/libgpiod/COPYING
+/usr/share/package-licenses/libgpiod/2c378b484c6da96db8f05f9bd795fcf5ddad0205
