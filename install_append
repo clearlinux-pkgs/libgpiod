@@ -1,2 +1,2 @@
-make -C src/tools
-make -C src/tools install DESTDIR=%{buildroot}
+make -C tools
+make -C tools install DESTDIR=%{buildroot}
